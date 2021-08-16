@@ -62,6 +62,19 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 
+// 3.4: Phonebook backend step4
+// Implement functionality that makes it possible to delete a single phonebook entry by making an HTTP DELETE request to the unique URL of that phonebook entry.
+
+// Test that your functionality works with either Postman or the Visual Studio Code REST client.
+app.delete('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id)
+    persons = persons.filter( entry => entry.id !== id)
+    
+    res.json(persons)
+
+})
+
+
 
 const PORT = 3001
 app.listen(PORT, (req, res) =>{
