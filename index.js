@@ -1,8 +1,20 @@
+const { json } = require('express')
 const express = require('express')
 const app = express()
+var morgan = require('morgan')
 
+// Configure morgan token to show data
+morgan.token('data', (req, res) => {
+    return req.method == 'POST'
+        ? JSON.stringify(req.body)
+        : null
+  })
 
+// Using the middleware json parser
 app.use(express.json())
+// Use middleware Morgan, configure the logger response
+app.use(morgan(':date :method :url :status :response-time[3] ms :data'))
+
 app.get('/', (req, res) =>{
     res.send("<h1>Phonebook application</h1>")
 })
