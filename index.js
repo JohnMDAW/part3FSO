@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 
 
-
+app.use(express.json())
 app.get('/', (req, res) =>{
     res.send("<h1>Phonebook application</h1>")
 })
@@ -75,8 +75,50 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 
+// 3.5: Phonebook backend step5
+// Expand the backend so that new phonebook entries can be added by making HTTP POST requests to the address http://localhost:3001/api/persons.
+// Generate a new id for the phonebook entry with the Math.random function. Use a big enough range for your random values so that the likelihood of creating duplicate ids is small.
+let generateId = () => {
+    let id = Math.round(Math.random() * 1000)
+    // Figure out if id generated is inside the array persons
+    const usedIds = persons.map(person => person.id)
 
-const PORT = 3001
+    while(usedIds.find(usedId => usedId === id)){
+        id = Math.round(Math.random() * 1000)
+    }
+
+    return id
+}
+
+app.post('/api/persons', (req, res) => {
+    let newEntry = {
+        id : generateId(), 
+        name : req.body.name,
+        number : req.body.number
+    }
+
+    if(!req.body.name || !req.body.number){
+        res.statusMessage = "No Name or Number"
+        return res.status(400).json({
+            error: "Missing name or nummber"
+        })
+    }
+    else if(persons.find(entry => entry.name.toLowerCase() === req.body.name.toLowerCase())){
+        res.statusMessage = "Duplicated id"
+        return res.status(400).json({
+            error: "Duplicated id"
+        })
+    }
+
+    persons.push(newEntry);
+
+    res.send(persons)
+
+})
+
+
+
+const PORT = 3002
 app.listen(PORT, (req, res) =>{
     console.log(`Server is listening on port ${PORT}`)
 })
